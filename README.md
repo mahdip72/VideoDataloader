@@ -63,6 +63,6 @@ pandas==1.4.1
 If you do not want to use sparse temporal sampling and instead want to sample a single N-frame continuous
 clip from a video, this is possible. Set `num_segments=1` and `frames_per_segment=1`.
 
-## Weakness
+## Weaknesses
 1. The video loading pipeline that this class implements is not very fast. It can be improved by using ffmpeg.
 2. Video augmentation is not added to the pipeline.
