@@ -5,7 +5,7 @@ import pandas as pd
 from torch.utils.data import Dataset, DataLoader
 
 
-class CustomDataset(Dataset):
+class VideoDataset(Dataset):
     def __init__(self, csv_dir, max_frame, frames_per_segment, num_segments, target_size):
 
         self.pairs = self.prepare_samples(csv_dir=csv_dir)
@@ -76,7 +76,7 @@ if __name__ == '__main__':
     data_path = 'samples.csv'
 
     batch = 2
-    training_data = CustomDataset(
+    training_data = VideoDataset(
         csv_dir=data_path,
         target_size=(320, 200),
         max_frame=80,
