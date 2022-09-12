@@ -10,7 +10,7 @@ The VideoFrameDataset class (an implementation of torch.utils.data.Dataset) serv
 and effectively load video samples from video datasets in PyTorch.
 
 1. Easily because this dataset class can be used with custom datasets with minimum effort and no modification.
-The class merely expects the video dataset to have a certain structure on disk and expects a .txt annotation file that
+The class merely expects the video dataset to have a certain structure on disk and expects a .csv annotation file that
 enumerates each video sample.
 2. Effectively because the implemented sampling strategy for video frames is very representative. 
 Video training using the entire sequence of video frames (often several hundred) is too memory and compute intense. 
@@ -25,7 +25,17 @@ from [Temporal Segment Networks (ECCV2016)](https://arxiv.org/abs/1608.00859) wi
 In conjunction with PyTorch's DataLoader, the VideoDataset class returns video batch tensors of
 size BATCH × FRAMES × HEIGHT × WIDTH × CHANNELS (BNHWC).
 
+## Requirements
+We test the Dataloader using following libraries:
 
+```
+torch==1.8.0
+python==3.8
+opencv-python==4.4.0.46
+pandas==1.4.1
+```
+
+## Demo
 ```python
     data_path = 'samples.csv'
 
@@ -52,3 +62,7 @@ size BATCH × FRAMES × HEIGHT × WIDTH × CHANNELS (BNHWC).
 
 If you do not want to use sparse temporal sampling and instead want to sample a single N-frame continuous
 clip from a video, this is possible. Set `num_segments=1` and `frames_per_segment=1`.
+
+## Weakness
+1. The video loading pipeline that this class implements is not very fast. It can be improved by using ffmpeg.
+2. Video augmentation is not added to the pipeline.
