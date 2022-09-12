@@ -1,17 +1,16 @@
 import torch
 import numpy as np
-import os
 import cv2
+import pandas as pd
 from torch.utils.data import Dataset, DataLoader
 
 
 class CustomDataset(Dataset):
-    def __init__(self, data_dir, max_frame, plot, frames_per_segment, num_segments, target_size):
+    def __init__(self, csv_dir, max_frame, frames_per_segment, num_segments, target_size):
 
-        self.pairs = self.load_video_directories(root_dir=data_dir)
+        self.pairs = self.prepare_samples(csv_dir=csv_dir)
         self.num_samples = len(self.pairs)
         self.target_size = target_size
-        self.plot = plot
         self.frames_per_segment = frames_per_segment
         self.num_segments = num_segments
         self.max_frame = max_frame
@@ -19,12 +18,12 @@ class CustomDataset(Dataset):
         print('number of frames:', self.frames_per_segment * self.num_segments)
 
     @staticmethod
-    def load_video_directories(root_dir):
-        video_dirs = os.listdir(root_dir)
-        return [
-            (os.path.abspath(os.path.join(root_dir, video_path)),
-             f'this is a label for the video number {inx}') for inx, video_path in enumerate(video_dirs)
-        ]
+    def prepare_samples(csv_dir):
+        df = pd.read_csv(csv_dir)
+        samples = []
+        for index, video_dir, label in df.itertuples():
+            samples.append((video_dir, label))
+        return samples
 
     def __len__(self):
         return len(self.pairs)
@@ -60,10 +59,6 @@ class CustomDataset(Dataset):
         input_dir, label = self.pairs[idx]
         video = self.load_video(input_dir)
 
-        if self.plot:
-            plot_video(video)
-            cv2.destroyAllWindows()
-
         num_frames = len(video)
         indices = self.compute_indices(num_frames)
         video = video[indices]
@@ -78,14 +73,13 @@ def plot_video(frames):
 
 
 if __name__ == '__main__':
-    data_path = './videos'
+    data_path = 'samples.csv'
 
     batch = 2
     training_data = CustomDataset(
-        data_dir=data_path,
+        csv_dir=data_path,
         target_size=(320, 200),
         max_frame=80,
-        plot=False,
         frames_per_segment=1,
         num_segments=80
         )
@@ -97,5 +91,5 @@ if __name__ == '__main__':
             vid = i[sample_number]
             lab = j[sample_number]
 
-            print(lab)
+            print('label:', lab)
             plot_video(vid)
